@@ -9,6 +9,8 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/rs/cors"
 )
 
 type Server struct {
@@ -31,6 +33,21 @@ func (s *Server) Run() error {
 		Addr:    s.Addr,
 		Handler: mux,
 	}
+
+	cors := cors.New(cors.Options{
+		AllowedOrigins: []string{"http://localhost:8080"},
+		AllowedMethods: []string{
+			http.MethodPost,
+			http.MethodGet,
+			http.MethodPatch,
+			http.MethodDelete,
+			http.MethodPut,
+		},
+		AllowedHeaders:   []string{"*"},
+		AllowCredentials: false,
+	})
+
+	server.Handler = cors.Handler(mux)
 
 	stopped := make(chan struct{})
 	go func() {

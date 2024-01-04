@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"erpv1/internal/converter"
 	"net/http"
+	"strconv"
+	"strings"
 )
 
 type converterHandlers struct {
@@ -14,6 +16,9 @@ func NewConverterHandlers(usecase converter.UseCase) converter.Handlers {
 	return &converterHandlers{usecase: usecase}
 }
 
+// @Operation GetExchangeRatesFromCB
+// @Route /exchange [get]
+// @Success 200 {object} Rates
 func (h *converterHandlers) GetExchangeRatesFromCB() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var currentCountry string
@@ -70,7 +75,14 @@ func (h *converterHandlers) ConvertRate() http.HandlerFunc {
 			return
 		}
 
-		data, err := h.usecase.ConvertRate(currentCountry, from[0], to[0], value[0])
+		parsedValue, err := strconv.ParseFloat(strings.Replace(value[0], ",", ".", -1), 64)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("value must be number"))
+			return
+		}
+
+		data, err := h.usecase.ConvertRate(currentCountry, from[0], to[0], parsedValue)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(err.Error()))

@@ -16,5 +16,5 @@ func (s *Server) MapHandlers(mux *http.ServeMux) {
 
 	converterHandlers := httpConverter.NewConverterHandlers(converterUsecase)
 
-	httpConverter.MapConverterRoutes("converter", mux, converterHandlers)
+	httpConverter.MapConverterRoutes("api/v1/converter", mux, converterHandlers)
 }

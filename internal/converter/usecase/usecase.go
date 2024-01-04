@@ -113,7 +113,7 @@ func (u *converterUseCase) GetExchangeRatesFromCB(country string) (models.Cached
 	return data, nil
 }
 
-func (u *converterUseCase) ConvertRate(country string, from string, to string, value string) (string, error) {
+func (u *converterUseCase) ConvertRate(country string, from string, to string, value float64) (string, error) {
 	upperCountry, upperTo, upperFrom := strings.ToUpper(country), strings.ToUpper(to), strings.ToUpper(from)
 	if upperTo == upperFrom {
 		return "", errors.New("params from and to must be different")
@@ -129,8 +129,7 @@ func (u *converterUseCase) ConvertRate(country string, from string, to string, v
 				return "", myErrors.ErrInvalidCurrency
 			}
 			rate, _ := strconv.ParseFloat(strings.Replace(valuteValue, ",", ".", -1), 32)
-			v, _ := strconv.ParseInt(value, 10, 32)
-			return strconv.FormatFloat(float64(v)*float64(rate), 'f', -1, 64), nil
+			return strconv.FormatFloat(value*float64(rate), 'f', -1, 64), nil
 		} else {
 			if upperFrom != "RUB" {
 				nativeCurrencyValue, ok := data.MapOfRates[upperFrom]
@@ -143,9 +142,8 @@ func (u *converterUseCase) ConvertRate(country string, from string, to string, v
 				}
 				nativeRate, _ := strconv.ParseFloat(strings.Replace(nativeCurrencyValue, ",", ".", -1), 32)
 				destRate, _ := strconv.ParseFloat(strings.Replace(destCurrencyValue, ",", ".", -1), 32)
-				v, _ := strconv.ParseInt(value, 10, 32)
 
-				amountInNativeCurrency := float64(v) * float64(nativeRate)
+				amountInNativeCurrency := value * float64(nativeRate)
 
 				return strconv.FormatFloat(amountInNativeCurrency/destRate, 'f', -1, 64), nil
 			} else {
@@ -154,8 +152,7 @@ func (u *converterUseCase) ConvertRate(country string, from string, to string, v
 					return "", myErrors.ErrInvalidCurrency
 				}
 				rate, _ := strconv.ParseFloat(strings.Replace(valuteValue, ",", ".", -1), 32)
-				v, _ := strconv.ParseInt(value, 10, 32)
-				return strconv.FormatFloat(float64(v)/rate, 'f', -1, 64), nil
+				return strconv.FormatFloat(value/rate, 'f', -1, 64), nil
 			}
 		}
 	} else if upperCountry == "THAI" {
@@ -169,8 +166,7 @@ func (u *converterUseCase) ConvertRate(country string, from string, to string, v
 				return "", myErrors.ErrInvalidCurrency
 			}
 			rate, _ := strconv.ParseFloat(strings.Replace(valuteValue, ",", ".", -1), 32)
-			v, _ := strconv.ParseInt(value, 10, 32)
-			return strconv.FormatFloat(float64(v)*rate, 'f', -1, 64), nil
+			return strconv.FormatFloat(value*rate, 'f', -1, 64), nil
 		} else {
 			if upperFrom != "THB" {
 				nativeCurrencyValue, ok := data.MapOfRates[upperFrom]
@@ -183,9 +179,8 @@ func (u *converterUseCase) ConvertRate(country string, from string, to string, v
 				}
 				nativeRate, _ := strconv.ParseFloat(strings.Replace(nativeCurrencyValue, ",", ".", -1), 32)
 				destRate, _ := strconv.ParseFloat(strings.Replace(destCurrencyValue, ",", ".", -1), 32)
-				v, _ := strconv.ParseInt(value, 10, 32)
 
-				amountInNativeCurrency := float64(v) * float64(nativeRate)
+				amountInNativeCurrency := value * float64(nativeRate)
 
 				return strconv.FormatFloat(amountInNativeCurrency/destRate, 'f', -1, 64), nil
 			} else {
@@ -194,9 +189,8 @@ func (u *converterUseCase) ConvertRate(country string, from string, to string, v
 					return "", myErrors.ErrInvalidCurrency
 				}
 				destRate, _ := strconv.ParseFloat(strings.Replace(destCurrencyValue, ",", ".", -1), 32)
-				v, _ := strconv.ParseInt(value, 10, 32)
 
-				return strconv.FormatFloat(float64(v)/destRate, 'f', -1, 64), nil
+				return strconv.FormatFloat(value/destRate, 'f', -1, 64), nil
 			}
 		}
 	}
