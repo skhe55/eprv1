@@ -41,3 +41,5 @@
 
 `go swagger serve --port=8080 --no-open -F=swagger ./docs/swagger.yaml`
 
+## Preview
+https://github.com/skhe55/eprv1/assets/72722478/b7ab1596-db8b-4574-ab9c-d85838c574c5
