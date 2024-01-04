@@ -7,3 +7,11 @@ services:
       dockerfile: ./docker/api/Dockerfile
     ports: 
       - 7878:7878
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    ports:
+      - "8080:8080"
+    volumes:
+      - ../../docs/swagger.yaml:/docs/swagger.yaml
+    environment:
+      SWAGGER_JSON: ../../docs/swagger.yaml

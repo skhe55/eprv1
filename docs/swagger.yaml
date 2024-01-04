@@ -1,0 +1,72 @@
+swagger: '2.0'
+host: localhost:7878
+info:
+  title: Converter API
+  description: A simple Converter API
+  version: 0.0.1
+basePath: /api/v1
+schemes:
+  - http
+paths:
+  /converter/exchange:
+    get:
+      summary: get exchange rates from cb
+      produces: 
+      - application/json
+      responses:
+        200:
+          description: An array of rates
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Rates'
+    parameters:
+    - name: country
+      in: query
+      description: country cb (support only ru/thai)
+      required: false
+      type: string
+  /converter/convert:
+    get:
+      summary: currency conversion
+      produces: 
+      - text/plain
+      responses:
+        200:
+          description: converted currency at the rate of the central bank of the selected country (or default bank if param 'country' missed)
+          schema:
+            type: string
+    parameters:
+    - name: country
+      in: query
+      description: country cb (e.g. ru/thai)
+      required: false
+      type: string
+    - name: from
+      in: query
+      description: from currency (e.g. rub/thb/usd/eur)
+      required: true
+      type: string
+    - name: to
+      in: query
+      description: to currency (e.g. rub/thb/usd/eur)
+      required: true
+      type: string
+    - name: value
+      in: query
+      description: amount currency (e.g. 5, 10, 20...)
+      required: true
+      type: string
+
+definitions:
+  Rates:
+    type: object
+    properties:
+      CharCode:
+        type: string
+      Value:
+        type: number
+        format: float
+    required:
+      - CharCode
+      - Value
